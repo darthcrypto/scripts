@@ -1,0 +1,16 @@
+#Creating a Directory Account in IPA
+
+#1 create ldif account file such as ALFRESCO_AUTH_USER.ldif
+
+dn: uid=alfresco_auth_bind,cn=sysaccounts,cn=etc,dc=blu
+changetype: add
+objectclass: account
+objectclass: simplesecurityobject
+uid: ovirt_auth_bind
+userPassword: dfCsDcv5D4ZaVFSq52cG
+passwordExpirationTime: 20380119031407Z
+nsIdleTimeout: 0
+
+#2 add ALFRESCO_AUTH_USER.ldif to ldap directory
+
+ldapmodify -D 'cn=Directory Manager' -W -x -f ALFRESCO_AUTH_USER.ldif

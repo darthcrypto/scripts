@@ -1,0 +1,81 @@
+LoadModule ssl_module /usr/lib64/httpd/modules/mod_ssl.so
+
+Listen 443
+
+SSLPassPhraseDialog  builtin
+
+SSLSessionCache         shmcb:/var/cache/mod_ssl/scache(512000)
+SSLSessionCacheTimeout  300
+
+SSLCryptoDevice builtin
+
+<VirtualHost *:80>
+    ProxyPreserveHost On
+
+    ServerName netbox.blu
+
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{SERVER_NAME}/%$1 [R,L]
+
+    Alias /project-static /var/www/html/netbox/netbox/project-static
+
+    <Directory /var/www/html/netbox/netbox/project-static>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    <Location /project-static>
+        ProxyPass !
+    </Location>
+
+    ProxyPass / http://127.0.0.1:8000/
+    ProxyPassReverse / http://127.0.0.1:8000/
+</VirtualHost>
+
+
+<VirtualHost *:443>
+    ProxyPreserveHost On
+
+    ServerName netbox.blu
+
+    ErrorLog /var/log/httpd/ssl_error_log
+    TransferLog /var/log/httpd/ssl_access_log
+    LogLevel warn
+
+    SSLEngine on
+    SSLProtocol All -SSLv2 -SSLv3
+    SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH:AES256+RSA
+    SSLHonorCipherOrder on
+    SSLCertificateKeyFile /etc/pki/tls/private/netbox.blu.key
+    SSLCertificateFile /etc/pki/tls/certs/netbox.blu.crt
+    SSLCACertificateFile /etc/ipa/ca.crt
+
+    <Files ~ "\.(cgi|shtml|phtml|php3?)$">
+        SSLOptions +StdEnvVars
+    </Files>
+    <Directory "/var/www/cgi-bin">
+        SSLOptions +StdEnvVars
+    </Directory>
+    SetEnvIf User-Agent ".*MSIE.*" \
+    nokeepalive ssl-unclean-shutdown \
+    downgrade-1.0 force-response-1.0
+    CustomLog logs/ssl_request_log \
+    "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+    Alias /project-static /var/www/html/netbox/netbox/project-static
+
+    <Directory /var/www/html/netbox/netbox/project-static>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    <Location /project-static>
+        ProxyPass !
+    </Location>
+
+    ProxyPass / http://127.0.0.1:8000/
+    ProxyPassReverse / http://127.0.0.1:8000/
+

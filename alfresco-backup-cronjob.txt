@@ -1,0 +1,26 @@
+#!/bin/bash
+
+TIME=$(date + %Y-%m-%d)
+
+#STEP 1: backup solr4Backup
+tar -czvf /tmp/alfresco-backups/solr4Backup.${TIME}.tar.gz
+/opt/alfresco-community/alf_data/solr4Backup
+
+#STEP 2: backup postgresql database
+/opt/alfresco-community/postgresql/bin/pg_dump -U alfresco alfresco -c -f
+/tmp/alfresco-backups/pg_dump.${TIME}.sql
+
+###in order to not have to put in password for psql db during script:
+###password stored in ~/.pgpass:
+###localhost:5432:alfresco:alfresco:password
+
+#STEP 3: backup contentstore
+tar -czvf /tmp/alfresco-backups/contentstore.${TIME}.tar.gz
+/opt/alfresco-community/alf_data/contentstore
+
+#STEP 4: backup deleted files of content store
+tar -czvf /tmp/alfresco-backups/contentstore.deleted.${TIME}.tar.gz
+/opt/alfresco-community/alf_data/contentstore.deleted
+
+###STEP 5: add the above to a cronjob.
+### 0 3 * * * /opt/alfresco-backup.sh 2>/dev/null

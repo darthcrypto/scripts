@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+#biggest directories in home directory
+du -a /home | sort -n -r | head -5
+
+#biggest directory in current directory
+du -a | sort -n -r | head -5
+
+#biggest directory human readable
+du -sh * | sort -rh | head -5
+
+#top 10 directories and pinpoints files
+du -ah * | sort -rh | head -n 10

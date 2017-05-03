@@ -1,0 +1,5 @@
+#get ssl cert from ipa server
+ipa-getcert request -k /etc/pki/tls/private/`hostname`.key -f /etc/pki/tls/certs/`hostname`.crt -N CN=`hostname` -D `hostname` -K HTTP/alfresco.blu@BLU
+
+#verify ssl cert on client
+ipa-getcert list

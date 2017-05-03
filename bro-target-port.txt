@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#targets the destination ip and port of a bro log
+
+
+zcat conn.15\:00\:01-16\:00\:02.log.gz |awk '$3~/192.168.50.69/ && $4~/52569/'|
+less -S

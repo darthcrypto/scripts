@@ -1,0 +1,1 @@
+</dev/urandom tr -dc '2345qwertQWERTasdfgASDFGzxcvbZCVB' | head -c10 echo

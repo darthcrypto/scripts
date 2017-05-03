@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#script for ipa client install
+
+
+yum install ipa-client -y
+
+ipa-client-install --enable-dns-update --unattended -p admin@BLU -w PASSWORDHERE --request-cert
+
+ipa-client-automount --unattended
+
+kinit admin@BLU
+
+#after this run kinit to get kerberos ticket
+
+# --force-join
+#may need force-join

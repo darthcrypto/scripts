@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd /opt/exports/homes/
+
+cp -R /etc/skel  $1
+
+chmod 0755 $1
+
+chown -R $1. $1
+
+setfacl -b $1
+setfacl -m o:x $1

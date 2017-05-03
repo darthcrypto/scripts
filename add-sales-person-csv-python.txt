@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+
+import csv, sys
+#from tempfile import csvAfterPythonScript
+#import shutil
+
+#open the file
+#openfile = open('file.csv')
+#csv_file = csv.reader(openfile)
+
+
+#filename = open('test-csv.csv', 'r')
+#tempfile = csvAfterPythonScript(delete=False)
+
+
+
+#ifile = open('test-csv.csv', "rb")
+#reader = csv.reader(ifile)
+#ofile = open('ttest.csv', "wb")
+#write = csv.writer(ofile, delimiter=',', quotechar='"')
+
+
+filename = open("test-csv.csv")
+
+r = csv.reader(filename)
+
+
+
+with open(r'test-csv.csv', 'a') as f:
+    for row in f:
+        if row[5] == "MD":
+            writer = csv.writer(f)
+            eastsales = "Christinia Swanwick"
+            writer.writerow(eastsales)
+
+
+
+
+
+#for row in reader:
+#    if row[5] == "MD":
+#        eastsales = "Christina Swanwick"
+#        row.append(eastsales)
+
+#ifile.close()
+#ofile.close()
+
+
+
+
+
+
+
+
+
+
+#input_file = csv.DictReader(open("contacts.csv"))
+#input_file = csv.reader(open()
+
+#regions
+
+#midatlanticfrederal = ["WV", "VA", "MD", "DC"]
+#northeast = ["ME", "VT", "NH", "MA", "CT", "NJ", "DE", "PA", "OH", "RI"]
+#southeast = ["NC", "SC", "GA", "FL", "AL"]
+#south = ["TX", "OK", "AR", "LA", "MS", "TN", "KY"]
+#midwest = ["ND", "SD", "NE", "KS", "MN", "IA", "MO", "WI", "IL", "MI", "IN"]
+#mountain = ["MT", "ID", "WY", "UT", "CO", "AZ", "NM"]
+#west = ["WA", "OR", "AK", "NV", "CA", "HI"]
+
+
+#script
+
+#iwith open(filename, 'rb') as csvFile, tempfile:
+#    reader = csv.reader(csvFile, delimiter=',', quotechar='"')
+#    writer = csv.writer(tempfile, delimiter=',', quotechar='"')
+
+#with open('test-csv.csv', 'rb') as f:
+#    reader = csv.reader(f)   #pass file to the csv reader
+#    for row in reader:       #iterate over the tows in the file
+#        if row[5] == "MD":
+#            row.append("Christina Swanwick")
+
+#with open('test-csv.csv', 'wb') as f:
+#    #overwrite old file with modified rows
+#    writer = csv.writer(f)
+
+
+
+
+
+
+
+
+#    elif column h = northeast:
+#   elif column h = southeast:
+
+#elif column h = south:
+#elif column h = midwest:
+#elif column h = mountain:
+#elif column h = west:
+#elif column h = "State":
+#        do nothing
+#else column h = blank:
+# do nothing
+
+

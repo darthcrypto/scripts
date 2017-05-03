@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#bro-cut a timestamp in human readable format
+
+bro-cut -d ts id.orig_h id.orig_p id.resp_h id.resp_p proto < conn.log
+
+#or user zless at the beginning

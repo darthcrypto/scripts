@@ -1,0 +1,171 @@
+yum-config-manager --disable base
+yum-config-manager --disable extras
+yum-config-manager --disable updates
+
+
+cat << EOF > /etc/yum.repos.d/pulp.repo
+[CentOS_Updates-7-x86_64]
+Name=CentOS_Updates-7-x86_64
+BaseURL=http://pulp2.blu/pulp/repos/distro/CentOS/x86_64/7/updates/
+GPGKey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[CentOS_CR-7-x86_64]
+Name=CentOS_CR-7-x86_64
+BaseURL=http://pulp2.blu/pulp/repos/distro/CentOS/x86_64/7/cr/
+GPGKey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[CentOS-7.0-x86_64]
+Name=CentOS-7.0-x86_64
+BaseURL=http://pulp2.blu/pulp/repos/distro/CentOS/x86_64/7/7.0/
+GPGKey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[EPEL7-x86_64]
+Name=EPEL7-x86_64
+BaseURL=http://pulp2.blu/pulp/repos/distro/EPEL/7/
+GPGKey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+
+[ovirt-4.0-el7]
+Name=ovirt-4.0-el7
+BaseURL=http://pulp2.blu/pulp/repos/oVirt/4.0/el7/
+gpgcheck=0
+
+[ovirt-3.5-el7]
+Name=ovirt-3.5-el7
+BaseURL=http://pulp.blu/pulp/repos/oVirt-3.5-el7/
+GPGKey=file:///etc/pki/rpm-gpg/RPM-GPG-ovirt
+
+#[gluster-epel7]
+#Name=gluster-epel7
+#BaseURL=file:///root/gluster-epel7
+#gpgcheck=0
+
+[Zabbix-3.0]
+Name=Zabbix-3.0-el7
+BaseURL=http://pulp2.blu/pulp/repos/Zabbix/3.0/el7/
+GPGKey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
+gpgcheck=1
+EOF
+
+yum clean all
+
+cat > /etc/chrony.conf << END_CHRONY_CONF
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+server 192.168.10.5
+server 192.168.10.6
+
+# Ignore stratum in source selection.
+stratumweight 0
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# Enable kernel RTC synchronization.
+rtcsync
+
+# In first three updates step the system clock instead of slew
+# if the adjustment is larger than 10 seconds.
+makestep 10 3
+
+# Allow NTP client access from local network.
+#allow 192.168/16
+
+# Listen for commands only on localhost.
+bindcmdaddress 127.0.0.1
+bindcmdaddress ::1
+
+# Serve time even if not synchronized to any NTP server.
+#local stratum 10
+
+keyfile /etc/chrony.keys
+
+# Specify the key used as password for chronyc.
+commandkey 1
+
+# Generate command key if missing.
+generatecommandkey
+
+# Disable logging of client accesses.
+noclientlog
+
+# Send a message to syslog if a clock adjustment is larger than 0.5 seconds.
+logdir /var/log/chrony
+#log measurements statistics tracking
+END_CHRONY_CONF
+
+systemctl restart chronyd.service
+chronyc -a burst 4/4
+
+
+cat > /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 << EOF
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+mQINBFKuaIQBEAC1UphXwMqCAarPUH/ZsOFslabeTVO2pDk5YnO96f+rgZB7xArB
+OSeQk7B90iqSJ85/c72OAn4OXYvT63gfCeXpJs5M7emXkPsNQWWSju99lW+AqSNm
+jYWhmRlLRGl0OO7gIwj776dIXvcMNFlzSPj00N2xAqjMbjlnV2n2abAE5gq6VpqP
+vFXVyfrVa/ualogDVmf6h2t4Rdpifq8qTHsHFU3xpCz+T6/dGWKGQ42ZQfTaLnDM
+jToAsmY0AyevkIbX6iZVtzGvanYpPcWW4X0RDPcpqfFNZk643xI4lsZ+Y2Er9Yu5
+S/8x0ly+tmmIokaE0wwbdUu740YTZjCesroYWiRg5zuQ2xfKxJoV5E+Eh+tYwGDJ
+n6HfWhRgnudRRwvuJ45ztYVtKulKw8QQpd2STWrcQQDJaRWmnMooX/PATTjCBExB
+9dkz38Druvk7IkHMtsIqlkAOQMdsX1d3Tov6BE2XDjIG0zFxLduJGbVwc/6rIc95
+T055j36Ez0HrjxdpTGOOHxRqMK5m9flFbaxxtDnS7w77WqzW7HjFrD0VeTx2vnjj
+GqchHEQpfDpFOzb8LTFhgYidyRNUflQY35WLOzLNV+pV3eQ3Jg11UFwelSNLqfQf
+uFRGc+zcwkNjHh5yPvm9odR1BIfqJ6sKGPGbtPNXo7ERMRypWyRz0zi0twARAQAB
+tChGZWRvcmEgRVBFTCAoNykgPGVwZWxAZmVkb3JhcHJvamVjdC5vcmc+iQI4BBMB
+AgAiBQJSrmiEAhsPBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBqL66iNSxk
+5cfGD/4spqpsTjtDM7qpytKLHKruZtvuWiqt5RfvT9ww9GUUFMZ4ZZGX4nUXg49q
+ixDLayWR8ddG/s5kyOi3C0uX/6inzaYyRg+Bh70brqKUK14F1BrrPi29eaKfG+Gu
+MFtXdBG2a7OtPmw3yuKmq9Epv6B0mP6E5KSdvSRSqJWtGcA6wRS/wDzXJENHp5re
+9Ism3CYydpy0GLRA5wo4fPB5uLdUhLEUDvh2KK//fMjja3o0L+SNz8N0aDZyn5Ax
+CU9RB3EHcTecFgoy5umRj99BZrebR1NO+4gBrivIfdvD4fJNfNBHXwhSH9ACGCNv
+HnXVjHQF9iHWApKkRIeh8Fr2n5dtfJEF7SEX8GbX7FbsWo29kXMrVgNqHNyDnfAB
+VoPubgQdtJZJkVZAkaHrMu8AytwT62Q4eNqmJI1aWbZQNI5jWYqc6RKuCK6/F99q
+thFT9gJO17+yRuL6Uv2/vgzVR1RGdwVLKwlUjGPAjYflpCQwWMAASxiv9uPyYPHc
+ErSrbRG0wjIfAR3vus1OSOx3xZHZpXFfmQTsDP7zVROLzV98R3JwFAxJ4/xqeON4
+vCPFU6OsT3lWQ8w7il5ohY95wmujfr6lk89kEzJdOTzcn7DBbUru33CQMGKZ3Evt
+RjsC7FDbL017qxS+ZVA/HGkyfiu4cpgV8VUnbql5eAZ+1Ll6Dw==
+=hdPa
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
+
+cat > /etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX << EOF
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+mQGiBFCNJaYRBAC4nIW8o2NyOIswb82Xn3AYSMUcNZuKB2fMtpu0WxSXIRiX2BwC
+YXx8cIEQVYtLRBL5o0JdmoNCjW6jd5fOVem3EmOcPksvzzRWonIgFHf4EI2n1KJc
+JXX/nDC+eoh5xW35mRNFN/BEJHxxiRGGbp2MCnApwgrZLhOujaCGAwavGwCgiG4D
+wKMZ4xX6Y2Gv3MSuzMIT0bcEAKYn3WohS+udp0yC3FHDj+oxfuHpklu1xuI3y6ha
+402aEFahNi3wr316ukgdPAYLbpz76ivoouTJ/U2MqbNLjAspDvlnHXXyqPM5GC6K
+jtXPqNrRMUCrwisoAhorGUg/+S5pyXwsWcJ6EKmA80pR9HO+TbsELE5bGe/oc238
+t/2oBAC3zcQ46wPvXpMCNFb+ED71qDOlnDYaaAPbjgkvnp+WN6nZFFyevjx180Kw
+qWOLnlNP6JOuFW27MP75MDPDpbAAOVENp6qnuW9dxXTN80YpPLKUxrQS8vWPnzkY
+WtUfF75pEOACFVTgXIqEgW0E6oww2HJi9zF5fS8IlFHJztNYtbQgWmFiYml4IFNJ
+QSA8cGFja2FnZXJAemFiYml4LmNvbT6IYAQTEQIAIAUCUI0lpgIbAwYLCQgHAwIE
+FQIIAwQWAgMBAh4BAheAAAoJENE9WOR56l7UhUwAmgIGZ39U6D2w2oIWDD8m7KV3
+oI06AJ9EnOxMMlxEjTkt9lEvGhEX1bEh7bkBDQRQjSWmEAQAqx+ecOzBbhqMq5hU
+l39cJ6l4aocz6EZ9mSSoF/g+HFz6WYnPAfRaYyfLmZdtF5rGBDD4ysalYG5yD59R
+Mv5tNVf/CEx+JAPMhp6JCBkGRaH+xHws4eBPGkea4rGNVP3L3rA7g+c1YXZICGRI
+OOH7CIzIZ/w6aFGsPp7xM35ogncAAwUD/3s8Nc1OLDy81DC6rGpxfEURd5pvd/j0
+D5Di0WSBEcHXp5nThDz6ro/Vr0/FVIBtT97tmBHX27yBS3PqxxNRIjZ0GSWQqdws
+Q8o3YT+RHjBugXn8CzTOvIn+2QNMA8EtGIZPpCblJv8q6MFPi9m7avQxguMqufgg
+fAk7377Rt9RqiEkEGBECAAkFAlCNJaYCGwwACgkQ0T1Y5HnqXtQx4wCfcJZINKVq
+kQIoV3KTQAIzr6IvbZoAn12XXt4GP89xHuzPDZ86YJVAgnfK
+=+200
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
+
+
+
+yum update -y
+yum install ipa-client -y
+#ipa-client-install --enable-dns-updates --unattended -p admin@BLU -w password --force-join
+#ipa-client-automount --unattended
+#kinit admin@BLU
+
+yum install tmux -y
+
+chronyc -a burst 4/4
+systemctl restart chronyd.service
+
