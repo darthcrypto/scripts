@@ -1,0 +1,6 @@
+svn status
+
+svn diff
+
+svn ci -m "Ticket number ticket title"
+example:  svn ci -m "INF-7814 Setup monitoring for tsp nodes in AWS"
