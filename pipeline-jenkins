@@ -1,0 +1,20 @@
+node ('s3repo') {
+
+    stage('Deploy Rpm') { 
+        sh '/usr/local/bin/uploadArtifactsDevrepo-s3.sh ${artifactId} ${version} ${repo}' 
+    }
+
+}
+
+node {
+
+    stage('Create Puppet Environment') {
+        sh '/usr/local/bin/createPuppetEnvironment.sh -type ${type} -ticket ${ticket} -source ${source}'
+    }
+
+    stage('Create Broadcaster Stack') {
+        git url: 'ssh://git@bitbucket.dev.lotame.com:7999/devops/aws-cloudformation.git', branch: 'feature/TENG-436'
+        sh 'cd scripts/s2s/; ./broadcaster_test_stack.py create --zookeeper ${zookeepernode} --name ${name} --environment ${environment} --keypair ${keypair} --prefix ${prefix} --template ../../infrastructure/s2s/broadcaster-test-stack.cform --params ../../infrastructure/s2s/broadcaster-test-stack-pipeline-configuration.json --profile dev'
+    }
+
+}
