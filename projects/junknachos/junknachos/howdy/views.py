@@ -3,6 +3,8 @@
 
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views.generic import ListView
+from .models import Link, Vote
 
 class HomePageView(TemplateView):
     def get(self, request, **kwargs):
@@ -13,3 +15,8 @@ class AboutPageView(TemplateView):
 
 class SitesPageView(TemplateView):
     template_name = "sites.html"
+
+class LinkListView(ListView):
+    model = Link
+
+
