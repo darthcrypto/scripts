@@ -5,10 +5,10 @@ from django.contrib.auth.models import User
 
 class Link(models.Model):
     title = models.CharField("Headline", max_length=100)
-    submitter = models.ForeignKey(User)
+    submitter = models.ForeignKey(User, on_delete=models.CASCADE)
     submitted_on = models.DateTimeField(auto_now_add=True)
     rank_score = models.FloatField(default=0.0)
-    url = models.URLField("URL", max_length=250, black=True)
+    url = models.URLField("URL", max_length=250, blank=True)
     description = models.TextField(blank=True)
 
     def __unicode__(self):
@@ -16,8 +16,8 @@ class Link(models.Model):
 
 
 class Vote(models.Model):
-    voter = models.ForeignKey(User)
-    link = models.ForeignKey(Link)
+    voter = models.ForeignKey(User, on_delete=models.CASCADE)
+    link = models.ForeignKey(Link, on_delete=models.CASCADE)
  
     def __unicode__(self):
         return "%s upvoted %s" % (self.voter.username, self.link.title)

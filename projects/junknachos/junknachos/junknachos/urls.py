@@ -17,10 +17,10 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from howdy.views import LinkListView
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^', include('howdy.urls')),
+    url(r'^$', LinkListView.as_view(), name='home')
 ]
 
 urlpatterns += staticfiles_urlpatterns()
