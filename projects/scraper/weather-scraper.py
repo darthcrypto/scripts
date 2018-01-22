@@ -1,6 +1,6 @@
 #!/usr/bin/env/python
 
-import panadas as pd
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
@@ -39,11 +39,10 @@ descs = [d["title"] for d in seven_day.select("tombstone-container img")]
 #print(temps)
 #print(descs)
 
-weather = pd.Dataframe({
+weather = pd.DataFrame({
         "period": periods,
         "short_desc": short_descs,
         "temp": temps,
-        "desc":descs
+        #"desc":descs
      })
-
 print weather
