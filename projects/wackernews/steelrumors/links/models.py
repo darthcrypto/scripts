@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.db.models.signals import post_save
 
 # Create your models here.
 
@@ -27,3 +28,24 @@ class Vote(models.Model):
 
   def __unicode__(self):
     return "%s upvoted %s" % (self.voter.username,self.link.title)
+
+class UserProfile(models.Model):
+   user = models.OneToOneField(User, unique=True)
+   bio = models.TextField(null=True)
+
+   def __unicode__(self):
+       return "%s's profile" % self.user
+
+   def create_profile(sender, instances, created, **kwargs):
+       if created:
+           profile, created = UserProfile.objects.get_or_create(user=instance)
+
+    #signal while saving user
+    #from django.db.models.signals import post_save
+   post_save.connect(create_profile, sender=User)
+
+
+
+
+
+
