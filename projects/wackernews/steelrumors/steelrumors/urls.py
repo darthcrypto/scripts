@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url, include
 from django.contrib import admin
-from links.views import LinkListView
+from links.views import LinkListView, UserProfileDetailView
 admin.autodiscover()
 
 
@@ -23,4 +23,5 @@ urlpatterns = patterns('',
        'template_name': 'login.html'}, name="login"),
     url(r'^logout/$', 'django.contrib.auth.views.logout_then_login', name="logout"),
     url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^users/(?P<slug>\w+)/$', UserProfileDetailView.as_view(), name="profile"),
 )
