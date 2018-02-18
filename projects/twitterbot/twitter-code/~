@@ -1,0 +1,31 @@
+#!/usr/bin/env/python
+
+#https://www.cameronezell.com/automating-a-twitter-bot-with-aws-lambda/
+
+import requests
+import tweepy
+import boto3
+import botocore
+import os
+import random
+from secrets import *
+
+#logic for sending tweet
+
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret) 
+auth.set_access_token(access_token, access_secret)
+api = tweepy.API(auth)
+
+#logic for selecting the photo
+southparkpic = '/root/scripts/projects/twitterbot/Pictures/south+park/ActiOn_1.jpg'
+
+user = api
+user.update_with_media(southparkpic)
+
+
+#logic for manipulating quote ***VERIFIED THIS WORKS***
+#quote = open("/root/scripts/projects/twitterbot/twitter-code/quote.txt","w")
+#quote.write("Hello World")
+#quote.close
+
+
