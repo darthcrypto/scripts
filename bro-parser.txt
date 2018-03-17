@@ -1,4 +1,4 @@
-
+###
 #broparser
 zcat conn.13\:00\:00-14\:00\:00.log.gz | bro-cut id.orig_h id.orig_p id.resp_h
 id.resp_p proto |awk '$1 == "192.168.50.52" && $2 == 49259 && $3 ==
